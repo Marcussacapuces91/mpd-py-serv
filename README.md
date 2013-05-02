@@ -22,18 +22,22 @@ Install
     ~ $ sudo aptitude install mpd
 
 Importer les sources (au besoin, définir les variables `http_proxy` et `https_proxy`)
+
     ~ $ git clone https://github.com/Marcussacapuces91/mpd-py-serv CybeRadio
 
 Ajouter le framework bootle.py
+
     ~ $ cd CybeRadio
     ~/CybeRadio $ wget https://github.com/defnull/bottle/raw/master/bottle.py
 
 Télécharger l'API Dojo
+
     ~/CybeRadio $ cd static
     ~/CybeRadio/static $ git clone https://github.com/dojo/dojo
     ~/CybeRadio/static $ git clone https://github.com/dojo/dijit
 
 Si nécessaire :
+
     ~/CybeRadio/static $ git clone https://github.com/dojo/dojox
     
     
