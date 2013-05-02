@@ -6,8 +6,9 @@ start.log
 /__pycache__
 
 # La lib Dojo
-/static/dojo
-/static/dijit
-/static/dojox
+static/dojo
+static/dijit
+static/dojox
 
-
+# Pas utilisée (enfin je crois) 
+python-mdp/
