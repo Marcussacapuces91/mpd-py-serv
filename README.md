@@ -3,26 +3,20 @@ mpd-py-serv
 
 A web server to control MPD server installed localy.
 
-Using :
-<<<<<<< HEAD
-
-* Bottle.py Framework
-* Dojo API
-* httpheader.py
-
 Copyright © 2013 Marc Sibert <marc at sibert dot fr>
-=======
+
+This work is free. You can redistribute it and/or modify it under the
+terms of the Do What The Fuck You Want To Public License, Version 2,
+as published by Sam Hocevar. See the COPYING.WTFYW file for more details.
+
+Dependences
+-----------
+
 * Python 3.x
 * Bottle.py Framework <http://bottlepy.org/docs/dev/>
 * Dojo Toolkit <http://dojotoolkit.org/>
 * httpheader.py 
 
-Copyright © 2013 Marc Sibert <marc at sibert dot fr>
-
->>>>>>> 3ddca82a04e553f40869f8cb8d7a66bc8a079371
-This work is free. You can redistribute it and/or modify it under the
-terms of the Do What The Fuck You Want To Public License, Version 2,
-as published by Sam Hocevar. See the COPYING.WTFYW file for more details.
 
 Install
 -------
