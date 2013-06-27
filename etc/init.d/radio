@@ -42,7 +42,7 @@ case "$1" in
         cd $DAEMON_PATH
 	printf "\n%-50s" "Mise à jour..."
 	git pull
-        PID=`./start.py 2>> start.log >> start.err & echo $!`
+        PID=`./start.py 2>> radio.log >> radio.err & echo $!`
         if [ -z $PID ]; then
                 printf "%s\n" "Echec"
         else
