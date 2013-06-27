@@ -1,8 +1,0 @@
-#!/bin/sh -x
-
-# Récupère les variables d'env. (http_proxy en particulier)
-# ... ou pas !
-# sh /etc/profile
-# export http_proxy="http://xxxxxxxxxxxxxxxxxxxxxx:8080"
-cd /home/pi/mpc
-./start.py 2>> start.log >> start.err &
