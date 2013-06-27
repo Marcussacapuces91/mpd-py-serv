@@ -1,0 +1,90 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          skeleton
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Interface Web pour MPD
+# Description:       Cette interface est un serveur Web en Python (v3) qui écoute sur le port 8080
+#                    et transmet des instruction au named pipe de MPD.
+### END INIT INFO
+
+# Author: Foo Bar <foobar@baz.org>
+#
+# Please remove the "Author" lines above and replace them
+# with your own name if you copy and modify this script.
+
+# Do NOT "set -e"
+
+# PATH should only include /usr/* if it runs after the mountnfs.sh script
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+DESC="Service Radio et son interface Web"
+NAME=radio
+DAEMON_PATH=/usr/local/bin/$NAME
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+# Exit if the package is not installed
+[ -x "$DAEMON_PATH" ] || exit 0
+
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
+# and status_of_proc is working.
+. /lib/lsb/init-functions
+
+case "$1" in
+    start)
+        printf "%-50s" "Démarrage de $NAME"
+        cd $DAEMON_PATH
+        PID=`./start.py 2>> start.log >> start.err & echo $!`
+        if [ -z $PID ]; then
+                printf "%s\n" "Echec"
+        else
+                echo $PID > $PIDFILE
+                printf "%s\n" "Succès"
+        fi
+        ;;
+        
+  stop)
+        printf "%-50s" "Arrêt de $NAME"
+        PID=`cat $PIDFILE`
+#       cd $DAEMON_PATH
+        if [ -f $PIDFILE ]; then
+                kill -HUP $PID
+                printf "%s\n" "Terminé"
+                rm -f $PIDFILE
+        else
+                printf "%s\n" "pidfile introuvable"
+        fi
+        ;;
+
+  restart)
+        $0 stop
+        $0 start
+        ;;
+
+  status)
+        printf "%-50s" "Test de $NAME..."
+        if [ -f $PIDFILE ]; then
+                PID=`cat $PIDFILE`
+                if [ -z "`ps aux | grep ${PID} | grep -v grep`" ]; then
+                        printf "%s\n" "Process mort mais fichier pidfile existant"
+                else
+                        printf "%s\n" "Ca roule"
+                fi
+        else
+                printf "%s\n" "Service arrêté"
+        fi
+        ;;
+
+  *)
+        echo "Usage: $SCRIPTNAME {start|stop|restart|status}" >&2
+        exit 3
+        ;;
+esac
+
+:
