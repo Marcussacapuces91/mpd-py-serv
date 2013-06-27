@@ -40,6 +40,8 @@ case "$1" in
     start)
         printf "%-50s" "Démarrage de $NAME"
         cd $DAEMON_PATH
+	printf "\n%-50s" "Mise à jour..."
+	git pull
         PID=`./start.py 2>> start.log >> start.err & echo $!`
         if [ -z $PID ]; then
                 printf "%s\n" "Echec"
@@ -48,7 +50,7 @@ case "$1" in
                 printf "%s\n" "Succès"
         fi
         ;;
-        
+
   stop)
         printf "%-50s" "Arrêt de $NAME"
         PID=`cat $PIDFILE`
@@ -72,12 +74,12 @@ case "$1" in
         if [ -f $PIDFILE ]; then
                 PID=`cat $PIDFILE`
                 if [ -z "`ps aux | grep ${PID} | grep -v grep`" ]; then
-                        printf "%s\n" "Process mort mais fichier pidfile existant"
+                        printf "%s\n" "Process mort mais fichier pidfile restant :-<"
                 else
-                        printf "%s\n" "Ca roule"
+                        printf "%s\n" "ça roulez :-)"
                 fi
         else
-                printf "%s\n" "Service arrêté"
+                printf "%s\n" "Service arrêté."
         fi
         ;;
 
