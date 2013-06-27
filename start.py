@@ -222,7 +222,7 @@ app.mount('/central', central)
 #  localisé.
 @app.route('/')
 def index():
-    return static_file('index.htm', root='/home/pi/mpc/static/')
+    return static_file('index.htm', root='static/')
 #    langs = request.get_header('Accept-Language')
 #    lang = acceptable_language(langs, ['en','fr'], 'en')
 #    redirect(str(lang)+'/index.htm')
@@ -231,7 +231,7 @@ def index():
 # 
 @app.route('/<filename:path>')
 def send_static(filename):
-    return static_file(filename, root='/home/pi/mpc/static/')
+    return static_file(filename, root='static/')
 
 ## Route de test.
 #
