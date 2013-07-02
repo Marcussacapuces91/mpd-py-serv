@@ -26,7 +26,7 @@ DAEMON=$DAEMON_PATH/start.py
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 USER=root
-HTTP_PROXY="http://msibert:Dorudise0613@autoproxy.mousquetaires.com:8080"
+# HTTP_PROXY="http://@autoproxy.mousquetaires.com:8080"
 
 # Exit if the package is not installed
 [ -x "$DAEMON_PATH" ] || exit 0
