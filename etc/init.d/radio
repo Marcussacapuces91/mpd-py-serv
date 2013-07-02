@@ -10,7 +10,7 @@
 #                    et transmet des instruction au named pipe de MPD.
 ### END INIT INFO
 
-# Author: Foo Bar <foobar@baz.org>
+# Author: Marc Sibert <marc@sibert.fr>
 #
 # Please remove the "Author" lines above and replace them
 # with your own name if you copy and modify this script.
@@ -22,8 +22,11 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Service Radio et son interface Web"
 NAME=radio
 DAEMON_PATH=/usr/local/bin/$NAME
+DAEMON=$DAEMON_PATH/start.py
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
+USER=root
+HTTP_PROXY="http://msibert:Dorudise0613@autoproxy.mousquetaires.com:8080"
 
 # Exit if the package is not installed
 [ -x "$DAEMON_PATH" ] || exit 0
@@ -36,32 +39,56 @@ SCRIPTNAME=/etc/init.d/$NAME
 # and status_of_proc is working.
 . /lib/lsb/init-functions
 
+# Définition du proxy http pour GIT & pour le serveur python.
+[ -z "$HTTP_PROXY" ] || export http_proxy="$HTTP_PROXY"
+
 case "$1" in
     start)
-        printf "%-50s" "Démarrage de $NAME"
+	echo "Démarrage du serveur $NAME :"
+# Vérification de la possibilité de démarrer le service
+	start-stop-daemon --test --start --background --chdir $DAEMON_PATH --quiet --make-pidfile --pidfile $PIDFILE --exec /usr/bin/python3 -- $DAEMON
+	ERR=$?
+	case $ERR in
+		0)	;;
+		1)	echo " Echec, service déjà démarré."
+			exit 1
+			;;
+		*)	echo " Echec, erreur $ERR."
+			exit $ERR;
+			;;
+	esac
+# Mise à jour du GitHub
+	echo "  Déplacement dans $DAEMON_PATH."
         cd $DAEMON_PATH
-	printf "\n%-50s" "Mise à jour..."
-	git pull
-        PID=`./start.py 2>> radio.log >> radio.err & echo $!`
-        if [ -z $PID ]; then
-                printf "%s\n" "Echec"
-        else
-                echo $PID > $PIDFILE
-                printf "%s\n" "Succès"
-        fi
+	echo -n "  Mise à jour du code..."
+	git pull >/dev/null 2>&1
+	if [ "$?" = 0 ]; then echo " OK."; else echo " Echec, poursuite."; fi
+	echo -n "  Lancement du service..."
+	start-stop-daemon --start --background --chdir $DAEMON_PATH --verbose --make-pidfile --pidfile $PIDFILE --exec /usr/bin/python3 -- $DAEMON 2>> $NAME.log >> $NAME.err
+	ERR=$?
+	if [ "$ERR" = 0 ]; then echo " Fait."; else echo " Echec, erreur $ERR."; exit $ERR; fi
         ;;
 
   stop)
-        printf "%-50s" "Arrêt de $NAME"
-        PID=`cat $PIDFILE`
-#       cd $DAEMON_PATH
-        if [ -f $PIDFILE ]; then
-                kill -HUP $PID
-                printf "%s\n" "Terminé"
-                rm -f $PIDFILE
-        else
-                printf "%s\n" "pidfile introuvable"
-        fi
+	echo "Arrêt du serveur $NAME :"
+	start-stop-daemon --test --stop --quiet --pidfile $PIDFILE --exec /usr/bin/python3 -- $DAEMON
+	ERR=$?
+	case $ERR in
+		0)	;;
+		1)	echo "  Echec, service déjà arrêté."
+			exit 1
+			;;
+		*)	echo "  Echec, erreur $ERR."
+			exit $ERR
+			;;
+	esac
+	PID=`cat $PIDFILE`
+	echo -n "  Arrêt du service (PID=$PID)..."
+	start-stop-daemon --stop --quiet --pidfile $PIDFILE --exec /usr/bin/python3 -- $DAEMON
+	ERR=$?
+	if [ "$ERR" = 0 ]; then echo " OK."; else echo " Echec, erreur $ERR."; exit $ERR; fi
+	echo "  Suppression du fichier $PIDFILE."
+	rm $PIDFILE
         ;;
 
   restart)
@@ -70,17 +97,22 @@ case "$1" in
         ;;
 
   status)
-        printf "%-50s" "Test de $NAME..."
-        if [ -f $PIDFILE ]; then
-                PID=`cat $PIDFILE`
-                if [ -z "`ps aux | grep ${PID} | grep -v grep`" ]; then
-                        printf "%s\n" "Process mort mais fichier pidfile restant :-<"
-                else
-                        printf "%s\n" "ça roulez :-)"
-                fi
-        else
-                printf "%s\n" "Service arrêté."
-        fi
+	echo "Etat du serveur $NAME :"
+	start-stop-daemon --status --quiet --pidfile $PIDFILE --exec /usr/bin/python3 -- $DAEMON
+	ERR=$?
+	case $ERR in
+		0)	PID=`cat $PIDFILE`
+			echo "  Fonctionnel (PID=$PID)."
+			;;
+		1)	echo "  Arrêté, mais $PIDFILE présent."
+			;;
+		3)	echo "  Arrêté."
+			;;
+		4)	echo "  Indéterminé."
+			;;
+		*)	echo "  Echec, erreur $ERR."
+			;;
+	esac
         ;;
 
   *)
