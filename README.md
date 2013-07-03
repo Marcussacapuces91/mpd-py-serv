@@ -13,10 +13,6 @@ Dependences
 -----------
 
 * Python 3.x
-* Bottle.py Framework <http://bottlepy.org/docs/dev/>
-* Dojo Toolkit <http://dojotoolkit.org/>
-* httpheader.py 
-
 
 Install
 -------
@@ -24,24 +20,25 @@ Install
     ~ $ sudo aptitude update
     ~ $ sudo aptitude install mpd
 
-Importer les sources (au besoin, définir les variables `http_proxy` et `https_proxy`)
+Aller dans le répertoire qui va bien, par exemple :
 
-    ~ $ git clone https://github.com/Marcussacapuces91/mpd-py-serv CybeRadio
+    ~ $ cd /usr/local/bin
 
-Ajouter le framework bootle.py
+et importer les sources (au besoin, définir les variables `http_proxy` et `https_proxy`)
 
-    ~ $ cd CybeRadio
-    ~/CybeRadio $ wget https://github.com/defnull/bottle/raw/master/bottle.py
+    ~ $ git clone https://github.com/Marcussacapuces91/mpd-py-serv radio
 
-Télécharger l'API Dojo
+Créer un lien logique entre le répertoire init.d et le script de lancement du serveur Radio
 
-    ~/CybeRadio $ cd static
-    ~/CybeRadio/static $ git clone https://github.com/dojo/dojo
-    ~/CybeRadio/static $ git clone https://github.com/dojo/dijit
-
-Si nécessaire :
-
-    ~/CybeRadio/static $ git clone https://github.com/dojo/dojox
+    ~ $ sudo ln -s /etc/init.d/radio /usr/local/bin/radio/etc/init.d/radio
     
+Au besoin, ajouter des variables (comme la définition du proxy) dans le fichier :
+
+    /etc/default/radio
+    
+Vérifier le fonctionnement du service avec :
+
+    ~ $ sudo service radio start
+    ~ $ sudo service radio status
     
   
