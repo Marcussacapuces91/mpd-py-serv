@@ -41,4 +41,7 @@ Vérifier le fonctionnement du service avec :
     ~ $ sudo service radio start
     ~ $ sudo service radio status
     
-  
+Activer le serveur au démarrage :
+
+    ~ $ sudo update-rc.d radio defaults
+
