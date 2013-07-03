@@ -25,8 +25,8 @@ DAEMON_PATH=/usr/local/bin/$NAME
 DAEMON=$DAEMON_PATH/start.py
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
+CONF=/etc/default/$NAME
 USER=root
-# HTTP_PROXY="http://@autoproxy.mousquetaires.com:8080"
 
 # Exit if the package is not installed
 [ -x "$DAEMON_PATH" ] || exit 0
@@ -38,6 +38,9 @@ USER=root
 # Depend on lsb-base (>= 3.2-14) to ensure that this file is present
 # and status_of_proc is working.
 . /lib/lsb/init-functions
+
+# Variables de configuration
+[ -f "$CONF" ] && . $CONF
 
 # Définition du proxy http pour GIT & pour le serveur python.
 [ -z "$HTTP_PROXY" ] || export http_proxy="$HTTP_PROXY"
@@ -58,13 +61,13 @@ case "$1" in
 			;;
 	esac
 # Mise à jour du GitHub
-	echo "  Déplacement dans $DAEMON_PATH."
+#	echo "  Déplacement dans $DAEMON_PATH."
         cd $DAEMON_PATH
 	echo -n "  Mise à jour du code..."
 	git pull >/dev/null 2>&1
 	if [ "$?" = 0 ]; then echo " OK."; else echo " Echec, poursuite."; fi
 	echo -n "  Lancement du service..."
-	start-stop-daemon --start --background --chdir $DAEMON_PATH --verbose --make-pidfile --pidfile $PIDFILE --exec /usr/bin/python3 -- $DAEMON 2>> $NAME.log >> $NAME.err
+	start-stop-daemon --start --background --no-close --chdir $DAEMON_PATH --verbose --make-pidfile --pidfile $PIDFILE --exec /usr/bin/python3 -- $DAEMON 2>> $NAME.log >> $NAME.err
 	ERR=$?
 	if [ "$ERR" = 0 ]; then echo " Fait."; else echo " Echec, erreur $ERR."; exit $ERR; fi
         ;;
