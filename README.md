@@ -30,7 +30,7 @@ et importer les sources (au besoin, définir les variables `http_proxy` et `http
 
 Créer un lien logique entre le répertoire init.d et le script de lancement du serveur Radio
 
-    ~ $ sudo ln -s /etc/init.d/radio /usr/local/bin/radio/etc/init.d/radio
+    ~ $ sudo ln -s /usr/local/bin/radio/etc/init.d/radio /etc/init.d/radio
     
 Au besoin, ajouter des variables (comme la définition du proxy) dans le fichier :
 
