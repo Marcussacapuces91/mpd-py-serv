@@ -36,31 +36,63 @@
 <!-- Boutons de sélection -->
      <div style="height: 100%; vertical-align: middle; border: none;" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'leading'">
         <div style="width: 100%; text-align: center;">
-            <button data-dojo-type="dijit/form/Button" id="buttonPrevious" type="button"><img src="prev.png" alt="Précédent" />
+            <button data-dojo-type="dijit/form/Button" id="buttonPrevious" type="button"><img src="prev.png" alt="Précédent">
                 <script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
                     player.onPressPrev();                    
                 </script>
             </button>
         </div>
         <div>
-            <button data-dojo-type="dijit/form/Button" id="buttonStop" type="button" disabled><img src="stop.png" alt="Stop" />
+            <button data-dojo-type="dijit/form/Button" id="buttonStop" type="button" disabled><img src="stop.png" alt="Stop">
                 <script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
                     player.onPressStop();                    
                 </script>
             </button>
-            <button data-dojo-type="dijit/form/Button" id="buttonPlayPause" type="button"><img src="play.png" alt="Play/Pause" />
+            <button data-dojo-type="dijit/form/Button" id="buttonPlayPause" type="button"><img src="play.png" alt="Play/Pause">
                 <script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
                     player.onPressPlayPause();                    
                 </script>
             </button>
         </div>
         <div style="width: 100%; text-align: center;">
-            <button data-dojo-type="dijit/form/Button" id="buttonNext" type="button"><img src="next.png" alt="Suivant" />
+            <button data-dojo-type="dijit/form/Button" id="buttonNext" type="button"><img src="next.png" alt="Suivant">
                 <script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
                     player.onPressNext();                    
                 </script>
             </button>
         </div>
+	<br />
+	<div style="width: 100%; text-align: center;">
+<!-- Dialogue de confirmation d'extinction -->
+	    <div data-dojo-type="dijit/Dialog" data-dojo-id="poweroffDialog" title="Extinction...">
+		<div class="dijitDialogPaneContentArea">
+		Vous allez éteindre la Raspberry PI, êtes-vous sûr ?
+	    	</div>
+		<div class="dijitDialogPaneActionBar">
+		    <button data-dojo-type="dijit/form/Button" type="button" id="ok">OK
+			<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+			    require(['dojo/request'], function(request) {
+				request.post('/sys/poweroff');
+			    });
+			    poweroffDialog.set("content", "En cours...<br /><div data-dojo-type='dijit/ProgressBar' style='width:200px' data-dojo-id='myProgressBar' id='downloadProgress' data-dojo-props='maximum:150'></div>");
+			    var i = 0;
+			    setInterval(function(){
+				if (i < 150) {
+				    myProgressBar.set({value : ++i});
+				} else if (i == 150) {
+				    poweroffDialog.set('content', "Vous pouvez débrancher la Raspberry Pi sans risque.");
+				}
+			    }, 100);
+			</script>
+		    </button>
+		    <button data-dojo-type="dijit/form/Button" type="button" data-dojo-props="onClick:function(){poweroffDialog.hide();}" id="cancel">Annuler</button>
+		</div>
+	    </div>
+
+            <button data-dojo-type="dijit/form/Button" id="buttonPoweroff" type="button" onClick="poweroffDialog.show()" >
+		<img src="poweroff.png" alt="Extinction" />
+            </button>
+	</div>
      </div>
 <!-- Zone Haute - Affichage de la piste en cours -->
      <div id='ecran' data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top', layoutPriority:1" style='height: 6pc'>

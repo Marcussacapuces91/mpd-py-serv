@@ -10,6 +10,21 @@ from bottle import                                                             \
     post, abort
 
 ################################################################################
+## Instance sys pour un API de contrôle du système (Raspi)
+import subprocess
+
+sys = Bottle()
+@sys.post('/poweroff')
+def poweroff():
+    try:
+        subprocess.check_call("sudo poweroff", shell=True)
+    except subprocess.CalledProcessError as err:
+        print(err)
+        raise RuntimeError(err)
+    response.status = '202 Accepted'
+    return
+
+################################################################################
 ## Instance mpd pour l'api rest mpd
 import socket
 
@@ -215,6 +230,7 @@ from httpheader import acceptable_language
 
 app = Bottle()
 
+app.mount('/sys', sys)
 app.mount('/mpd', mpd)
 app.mount('/central', central)
 
@@ -242,5 +258,5 @@ def hello():
 ## Lancement du serveur en écoute sur toutes les adresses & port 80.
 #
 if __name__ == '__main__':
-#    run(app, host='0.0.0.0', port=8080, debug=True, reloader=True)
+#    run(app, host='0.0.0.0', port=80, debug=True, reloader=True)
     run(app, host='0.0.0.0', port=80)
